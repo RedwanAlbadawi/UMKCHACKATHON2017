@@ -68,3 +68,5 @@ const MainRoot = () => <View style={{ flex: 1 }}>
   }
   <MainNavigator/>
 </View>;
+
+Expo.registerRootComponent(MainRoot);
