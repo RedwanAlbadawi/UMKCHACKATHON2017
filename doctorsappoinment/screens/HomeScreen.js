@@ -1,9 +1,11 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Image,
   Platform,
   ScrollView,
   StyleSheet,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -40,31 +42,47 @@ export default class HomeScreen extends React.Component {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+    this.setState({ location, loaded: true });
   };
   render() {
     let text = 'Waiting..';
-    if (this.state.errorMessage) {
-      text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-      console.log(this.state.location);
-      console.log(text);
+    let coords = {}
+    if (this.state.loaded) {
+      coords = this.state.location.coords;
+      console.log(coords);
+      return (
+        <View style={styles.container}>
+        <StatusBar
+         hidden={true}
+         backgroundColor="blue"
+         barStyle="light-content"
+         Height={0}
+       />
+          <MapView
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          >
+            <MapView.Marker
+              coordinate={coords}
+              title={'marker.title'}
+              description={'marker.description'}
+            />
+          </MapView>
+        </View>
+      );
     }
-    const { coords } = this.state.location;
-    return (
-      <View style={styles.container}>
-        <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        />
-      </View>
-    );
+    else {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
   }
 
   _maybeRenderDevelopmentModeWarning() {
@@ -112,9 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 19,
     textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: 'center',
