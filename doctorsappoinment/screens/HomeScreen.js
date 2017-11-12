@@ -1,15 +1,20 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Image,
   Platform,
   ScrollView,
   StyleSheet,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 
 import { WebBrowser, MapView, Constants, Location, Permissions } from 'expo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import firebase from 'firebase';
 
 import { MonoText } from '../components/StyledText';
 
@@ -17,6 +22,7 @@ export default class HomeScreen extends React.Component {
   state = {
     location: null,
     errorMessage: null,
+    doctors: {}
   };
   static navigationOptions = {
     header: null,
@@ -29,8 +35,46 @@ export default class HomeScreen extends React.Component {
     } else {
       this._getLocationAsync();
     }
+    var config = {
+      apiKey: 'AIzaSyBlyvBEct-StmV-DVSLPoHf1voair-6aSw',
+      authDomain: 'doctorappointment-2a6ef.firebaseapp.com',
+      databaseURL: 'https://doctorappointment-2a6ef.firebaseio.com',
+      projectId: 'doctorappointment-2a6ef',
+      storageBucket: 'doctorappointment-2a6ef.appspot.com',
+      messagingSenderId: '481515514891'
+    };
+    firebase.initializeApp(config);
+    firebase.database().ref('doctors').once('value', (snapshot) => {
+      this.setState({doctors: snapshot.val(), doctorsloaded: true});
+      console.log(this.state);
+    });
   }
-
+  onPressCallout(marker) {
+     this.props.navigation.navigate('Info', {
+                                              name: marker.name,
+                                              rating: marker.rating,
+                                              address: marker.formatted_address,
+                                              coords: marker.geometry.location
+                                            });
+  }
+  renderDoctors() {
+    if (this.state.doctorsloaded) {
+      this.state.doctors.forEach((marker) => {
+        console.log(marker);
+        return (
+          <MapView.Marker
+          coordinate={{
+            latitude:marker.geometry.location.lat,
+            longitude: marker.geometry.location.lng,
+          }}
+          title={marker.name}
+          description={marker.address}
+          onCalloutPress={() => this.onPressCallout(marker)}
+        />
+      );
+    });
+    }
+  }
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -40,31 +84,72 @@ export default class HomeScreen extends React.Component {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+    this.setState({ location, loaded: true });
   };
   render() {
     let text = 'Waiting..';
-    if (this.state.errorMessage) {
-      text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
-      console.log(this.state.location);
-      console.log(text);
+    let coords = {}
+    if (this.state.loaded && this.state.doctorsloaded) {
+      //coords = this.state.location.coords;
+      //console.log(this.state.location);
+      coords = { latitude: 39.0336 , longitude: -94.5760 }
+      return (
+        <View style={styles.container}>
+          <StatusBar hidden={true} />
+          <MapView
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          >
+            <MapView.Marker
+              coordinate={coords}
+              title={'current location'}
+            />
+            {
+                this.state.doctors.map((marker) => {
+                  console.log(marker);
+                  return (
+                    <MapView.Marker
+                    coordinate={{
+                      latitude:marker.geometry.location.lat,
+                      longitude: marker.geometry.location.lng,
+                    }}
+                    key={marker.id}
+                    title={marker.name}
+                    description={marker.address}
+                    onCalloutPress={() => this.onPressCallout(marker)}
+                  >
+                    <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'white',
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        borderRadius: 100,
+                        width: 50,
+                        height: 50
+                      }}>
+                      <MaterialCommunityIcons name="stethoscope" size={32} />
+                    </View>
+                  </MapView.Marker>
+                );
+                })
+            }
+          </MapView>
+        </View>
+      );
     }
-    const { coords } = this.state.location;
-    return (
-      <View style={styles.container}>
-        <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        />
-      </View>
-    );
+    else {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
   }
 
   _maybeRenderDevelopmentModeWarning() {
@@ -112,9 +197,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 19,
     textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: 'center',

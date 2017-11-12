@@ -3,6 +3,8 @@ import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
 import MainTabNavigator from './MainTabNavigator';
+import DoctorsScreen from '../screens/DoctorsScreen';
+
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 const RootStackNavigator = StackNavigator(
@@ -10,6 +12,9 @@ const RootStackNavigator = StackNavigator(
     Main: {
       screen: MainTabNavigator,
     },
+    Info: {
+      screen: DoctorsScreen
+    }
   },
   {
     navigationOptions: () => ({

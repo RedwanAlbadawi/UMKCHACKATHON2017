@@ -11,14 +11,11 @@
     };
     firebase.initializeApp(config);
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
+
 exports.helloWorld = functions.https.onRequest((request, response) => {
     const val = firebase.database().ref();
 
-    val.once('value').then(function(snapshot){
+    val.once('value').then(function (snapshot) {
         response.send(snapshot.exportVal())
     });
-    
- });
+})
