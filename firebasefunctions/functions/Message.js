@@ -28,8 +28,8 @@ module.exports = function (req, res) {
 
                 datebase.messages.push({
                     message_ID: {
-                        "text": req.t,
-                        "date": req.d
+                        "text": req.body.text,
+                        "date": req.body.date
                     }
 
                 });
@@ -37,13 +37,13 @@ module.exports = function (req, res) {
 
     } else {
         datebase.messages.push({
-            "chat_ID": req.c_ID,
-            "user_ID": req.u_ID,
-            "doctor_ID": req.d_ID,
+            "chat_ID": req.body.chat_ID,
+            "user_ID": req.body.user_ID,
+            "doctor_ID": req.body.doctor_ID,
             "messeges": {
                 message_ID: {
-                    "text": req.t,
-                    "date": req.d
+                    "text": req.body.text,
+                    "date": req.body.date
                 }
 
 
