@@ -1,33 +1,42 @@
 
 import React, { Component } from 'react';
 import {  View, Image, ScrollView } from 'react-native';
+import firebase from 'firebase';
 import { Text, Button } from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { Card, CardSection, Input, Spinner } from '../components/common';
 import { loginUser } from '../functions/LoginFunctions';
 
  class LoginForm extends Component {
-   state = {email: '', password: '', error: ''}
+   state = {loading: false, email: '', password: '', error: '', authState: false}
    onEmailChange(text) {
-    this.setState({ email: text});
+    this.setState({ email: text, error: ''});
    }
    onPasswordChange(text) {
-     this.setState({ password: text });
+     this.setState({ password: text, error: '' });
    }
    onButtonPress() {
-    const { email, password } = this.state;
-    var login = loginUser(email, password);
-    console.log(login);
-    /**if ( login.loginBool ) {
-      this.props.navigation.navigate('Main', { id: login.id });
-    }*/
+    const { email, password, authState } = this.state;
+    this.setState({ loading: true})
+    if ( email !== '' || password !== '') {
+      firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => {
+        this.setState({ authState: true, loading: false })
+        this.props.navigation.navigate('Main');
+      }).catch((error) => {
+        this.setState({ password: '', error: 'Invalid user or password'})
+      });
+    } else {
+      this.setState({ error: 'Password or email cannot be blank'})
+
+    }
    }
    onSignUpPress() {
      this.props.navigation.navigate('SignUp');
 
    }
    renderButton() {
-     if (this.props.loading) {
+     if (this.state.loading) {
        return <Spinner size="large" />;
      }
      return (

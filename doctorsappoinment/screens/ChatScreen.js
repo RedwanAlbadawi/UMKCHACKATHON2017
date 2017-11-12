@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { GiftedChat } from 'react-native-gifted-chat';
 

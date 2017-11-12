@@ -28,6 +28,7 @@ export default class HomeScreen extends React.Component {
     header: null,
   };
   componentWillMount() {
+    console.log('HomeScreen');
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',

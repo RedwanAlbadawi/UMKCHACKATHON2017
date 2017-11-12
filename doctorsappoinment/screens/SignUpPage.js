@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { View, Image } from 'react-native';
+import firebase from 'firebase';
 import { Text, Button } from 'react-native-elements';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { Card, CardSection, Input, Spinner } from '../components/common';
 
  class SignUp extends Component {
-   state = { email: '', password: '', name: ''}
+   state = { email: '', password: '', name: '', error: ''}
    onEmailChange(text) {
      this.setState({ email: text })
    }
@@ -15,9 +16,24 @@ import { Card, CardSection, Input, Spinner } from '../components/common';
    onPasswordChange(text) {
      this.setState({ password: text });
    }
+   createFireDirectory() {
+     const { currentUser } = firebase.auth();
+     const { name, email } = this.state;
+     console.log('here');
+     firebase.auth().onAuthStateChanged(() => {
+       const { currentUser } = firebase.auth();
+       console.log(currentUser);
+       firebase.database().ref(`users/${currentUser.uid}`).set(
+         {name, email, usertype: 'patient'}
+       );
+     })
+     this.props.navigation.navigate('Main');
+   }
    onButtonPress() {
-    const { email, password, name, account } = this.props;
-    this.props.createUser({ email, password, name, account });
+    const { email, password } = this.state;
+    firebase.auth().createUserWithEmailAndPassword(email,password)
+    .then(() => this.createFireDirectory())
+    .catch((error) => this.setState({ error: 'user already exists try loggin in' }))
    }
    onLoginPress() {
      this.props.navigation.navigate('Login');
@@ -70,7 +86,7 @@ import { Card, CardSection, Input, Spinner } from '../components/common';
         </CardSection>
 
         <Text style={styles.errorTextStyle}>
-        {this.props.error}
+        {this.state.error}
         </Text>
         <View>
           {this.renderButton()}
