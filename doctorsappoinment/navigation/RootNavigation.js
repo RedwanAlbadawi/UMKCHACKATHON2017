@@ -4,17 +4,28 @@ import { StackNavigator } from 'react-navigation';
 
 import MainTabNavigator from './MainTabNavigator';
 import DoctorsScreen from '../screens/DoctorsScreen';
-
+import Scheduling from '../screens/Scheduling';
+import LoginForm from '../screens/LoginPage';
+import SignUpForm from '../screens/SignUpPage';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 const RootStackNavigator = StackNavigator(
   {
+    Login: {
+      screen: LoginForm,
+    },
+    SignUp: {
+      screen: SignUpForm,
+    },
     Main: {
       screen: MainTabNavigator,
     },
     Info: {
-      screen: DoctorsScreen
-    }
+      screen: DoctorsScreen,
+    },
+    Schedule: {
+      screen: Scheduling,
+    },
   },
   {
     navigationOptions: () => ({

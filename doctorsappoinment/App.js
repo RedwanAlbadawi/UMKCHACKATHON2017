@@ -9,6 +9,17 @@ export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
   };
+  componentWillMount() {
+    var config = {
+      apiKey: 'AIzaSyBlyvBEct-StmV-DVSLPoHf1voair-6aSw',
+      authDomain: 'doctorappointment-2a6ef.firebaseapp.com',
+      databaseURL: 'https://doctorappointment-2a6ef.firebaseio.com',
+      projectId: 'doctorappointment-2a6ef',
+      storageBucket: 'doctorappointment-2a6ef.appspot.com',
+      messagingSenderId: '481515514891'
+    };
+    firebase.initializeApp(config);
+  }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (

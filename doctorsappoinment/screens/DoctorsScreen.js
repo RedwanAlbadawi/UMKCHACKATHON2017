@@ -15,6 +15,9 @@ class DoctorsScreen extends Component {
       );
     }
   }
+  onButtonPress() {
+    this.props.navigation.navigate('Schedule');
+  }
   render() {
     console.log(this.props.navigation.state);
     const info = this.props.navigation.state.params
@@ -29,7 +32,11 @@ class DoctorsScreen extends Component {
           <Text>Address: </Text>
           <Text>{ info.address }</Text>
         </View>
-        <Button buttonStyle={{ margin: 0 }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} title="Schedule Appoinment" />
+        <Button
+                onPress={this.onButtonPress.bind(this)}
+                buttonStyle={{ margin: 0 }}
+                containerViewStyle={{ marginLeft: 0, marginRight: 0 }}
+                title="Schedule Appoinment" />
         <View style={ styles.mapStyling }>
         <MapView
         style={{ flex: 1 }}

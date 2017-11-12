@@ -35,16 +35,8 @@ export default class HomeScreen extends React.Component {
     } else {
       this._getLocationAsync();
     }
-    var config = {
-      apiKey: 'AIzaSyBlyvBEct-StmV-DVSLPoHf1voair-6aSw',
-      authDomain: 'doctorappointment-2a6ef.firebaseapp.com',
-      databaseURL: 'https://doctorappointment-2a6ef.firebaseio.com',
-      projectId: 'doctorappointment-2a6ef',
-      storageBucket: 'doctorappointment-2a6ef.appspot.com',
-      messagingSenderId: '481515514891'
-    };
-    firebase.initializeApp(config);
-    firebase.database().ref('doctors').once('value', (snapshot) => {
+    firebase.database().ref('doctor').once('value', (snapshot) => {
+      console.log(snapshot.val());
       this.setState({doctors: snapshot.val(), doctorsloaded: true});
       console.log(this.state);
     });
@@ -110,8 +102,8 @@ export default class HomeScreen extends React.Component {
               title={'current location'}
             />
             {
-                this.state.doctors.map((marker) => {
-                  console.log(marker);
+                Object.keys(this.state.doctors).map((key, val) => {
+                  const marker = this.state.doctors[key];
                   return (
                     <MapView.Marker
                     coordinate={{
@@ -137,7 +129,7 @@ export default class HomeScreen extends React.Component {
                     </View>
                   </MapView.Marker>
                 );
-                })
+              })
             }
           </MapView>
         </View>
