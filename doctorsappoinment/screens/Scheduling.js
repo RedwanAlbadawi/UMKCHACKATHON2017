@@ -66,14 +66,14 @@ class AgendaScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: {},
+      items: '',
       selectedDay: '2017-11-12',
       selectedMonth: '2017-11'
     };
   }
 
   renderDay(day) {
-    console.log(day);
+    const { id } = this.props.navigation.state.params;
     if (day.month < 10) {
       console.log(String(day.month));
       this.setState({
@@ -88,15 +88,43 @@ class AgendaScreen extends Component {
         day
       });
     }
+    firebase.database().ref(`schedules/${id}/${day.month}/${day.day}`)
+    .once('value', (snapshot) => {
+      console.log(snapshot.val());
+      this.setState({ items: snapshot.val()})
+    })
+  }
+  onButtonPress(items){
+
   }
   renderDaySchedule(){
-    const { id } = navigation.state.params;
-    if(this.state.day) {
-      const { day } = this.state;
-      firebase.database().ref(`schedules/${id}/${day.month}/${day.day}`)
-      .once('value', (snapshot) => {
-        this.setState({ items: snapshot.val()})
-      })
+    if(this.state.items) {
+      const { items } = this.state;
+      var hour = 8;
+      var ampm = 'am'
+      var sched = [];
+      for(var i=0; i < items.length; i++){
+        if(hour > 12) {
+          ampm = 'pm'
+        }
+        if (items[i] === '1') {
+          sched.push(
+            <View style={{ borderWidth: 1, borderColor: 'black', paddingTop: 20, paddingBottom: 20}}>
+              <Text>{hour}:00-{hour}:50 {ampm}</Text>
+              <Text>Not Avalible</Text>
+            </View>);
+        } else {
+          sched.push(
+            <View style={{ borderWidth: 1, borderColor: 'black', paddingTop: 20}}>
+              <Text>{hour}:00-{hour}:50 {ampm}</Text>
+              <Button
+                      buttonStyle={{ margin: 0 }}
+                      containerViewStyle={{ marginLeft: 0, marginRight: 0 }}
+                      title="Schedule Appoinment" />
+            </View>);
+        }
+      }
+      return sched;
     }
   }
   render() {
@@ -114,6 +142,9 @@ class AgendaScreen extends Component {
         markingType={'interactive'}
 
       />
+      <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
+      {this.renderDaySchedule()}
+      </ScrollView>
     </View>
     );
   }

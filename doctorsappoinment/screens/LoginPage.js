@@ -24,10 +24,10 @@ import { loginUser } from '../functions/LoginFunctions';
         this.setState({ authState: true, loading: false })
         this.props.navigation.navigate('Main');
       }).catch((error) => {
-        this.setState({ password: '', error: 'Invalid user or password'})
+        this.setState({ password: '', error: 'Invalid user or password', loading: false})
       });
     } else {
-      this.setState({ error: 'Password or email cannot be blank'})
+      this.setState({ error: 'Password or email cannot be blank', loading: false})
 
     }
    }
