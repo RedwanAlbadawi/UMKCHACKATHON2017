@@ -28,7 +28,6 @@ export default class HomeScreen extends React.Component {
     header: null,
   };
   componentWillMount() {
-    console.log('HomeScreen');
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
@@ -37,9 +36,7 @@ export default class HomeScreen extends React.Component {
       this._getLocationAsync();
     }
     firebase.database().ref('doctor').once('value', (snapshot) => {
-      console.log(snapshot.val());
       this.setState({doctors: snapshot.val(), doctorsloaded: true});
-      console.log(this.state);
     });
   }
   onPressCallout(marker) {
@@ -47,13 +44,13 @@ export default class HomeScreen extends React.Component {
                                               name: marker.name,
                                               rating: marker.rating,
                                               address: marker.formatted_address,
-                                              coords: marker.geometry.location
+                                              coords: marker.geometry.location,
+                                              id: marker.id,
                                             });
   }
   renderDoctors() {
     if (this.state.doctorsloaded) {
       this.state.doctors.forEach((marker) => {
-        console.log(marker);
         return (
           <MapView.Marker
           coordinate={{

@@ -6,7 +6,10 @@ import MainTabNavigator from './MainTabNavigator';
 import DoctorsScreen from '../screens/DoctorsScreen';
 import Scheduling from '../screens/Scheduling';
 import LoginForm from '../screens/LoginPage';
+import ChatScreen from '../screens/ChatScreen';
 import SignUpForm from '../screens/SignUpPage';
+import NewMessageScreen from '../screens/NewMessageScreen';
+
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 const RootStackNavigator = StackNavigator(
@@ -26,6 +29,12 @@ const RootStackNavigator = StackNavigator(
     Schedule: {
       screen: Scheduling,
     },
+    NewMessage: {
+      screen: NewMessageScreen,
+    },
+    Chat: {
+      screen: ChatScreen,
+    }
   },
   {
     navigationOptions: () => ({

@@ -7,7 +7,7 @@ import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
-import ChatScreen from '../screens/ChatScreen';
+import InboxScreen from '../screens/Inbox';
 
 export default TabNavigator(
   {
@@ -18,7 +18,7 @@ export default TabNavigator(
       screen: LinksScreen,
     },
     Inbox: {
-      screen: ChatScreen,
+      screen: InboxScreen,
     },
   },
   {

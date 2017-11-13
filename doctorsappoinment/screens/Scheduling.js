@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import firebase from 'firebase';
 import { ScrollView, Text, View, StyleSheet, ListView } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { List, ListItem, Button } from 'react-native-elements';
 
 
 class HourlySched extends Component {
@@ -27,7 +29,6 @@ class HourlySched extends Component {
         borderColor: 'lightblue',
         marginLeft: 15,
         justifyContent: 'center',
-
         borderRadius: 5,
         marginBottom: 20
     }}>
@@ -66,8 +67,8 @@ class AgendaScreen extends Component {
     super(props);
     this.state = {
       items: {},
-      selectedDay: '2017-06-20',
-      selectedMonth: '2017-06'
+      selectedDay: '2017-11-12',
+      selectedMonth: '2017-11'
     };
   }
 
@@ -77,11 +78,25 @@ class AgendaScreen extends Component {
       console.log(String(day.month));
       this.setState({
         selectedDay: day.selectedDay,
-        selectedMonth: '2017-0'.concat(String(day.month)) });
+        selectedMonth: '2017-0'.concat(String(day.month)),
+        day
+      });
     } else {
       this.setState({
         selectedDay: day.selectedDay,
-        selectedMonth: '2017-'.concat(String(day.month)) });
+        selectedMonth: '2017-'.concat(String(day.month)),
+        day
+      });
+    }
+  }
+  renderDaySchedule(){
+    const { id } = navigation.state.params;
+    if(this.state.day) {
+      const { day } = this.state;
+      firebase.database().ref(`schedules/${id}/${day.month}/${day.day}`)
+      .once('value', (snapshot) => {
+        this.setState({ items: snapshot.val()})
+      })
     }
   }
   render() {
@@ -89,7 +104,7 @@ class AgendaScreen extends Component {
     <View style={{ flex: 1}}>
       <Calendar
         current={this.state.selectedDay}
-        minDate={'2016-05-10'}
+        minDate={'2017-10-10'}
         maxDate={'2018-05-30'}
         onDayPress={(day) => { this.renderDay(day); }}
         monthFormat={'yyyy MM'}
